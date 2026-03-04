@@ -76,65 +76,8 @@ def upgrade():
         "UPDATE educational_contents SET search_vector = to_tsvector('english', coalesce(title, '') || ' ' || coalesce(body, ''));"
     )
 
-    op.execute(
-        """
-        DO $$
-        BEGIN
-            IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name='daily_trackings') THEN
-                BEGIN
-                    PERFORM add_compression_policy('daily_trackings', INTERVAL '90 days');
-                    PERFORM add_retention_policy('daily_trackings', INTERVAL '2 years');
-                EXCEPTION WHEN OTHERS THEN
-                    -- Table may not be a hypertable (e.g. in test environments)
-                    NULL;
-                END;
-            END IF;
-            IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name='energy_logs') THEN
-                BEGIN
-                    PERFORM add_compression_policy('energy_logs', INTERVAL '90 days');
-                    PERFORM add_retention_policy('energy_logs', INTERVAL '2 years');
-                EXCEPTION WHEN OTHERS THEN
-                    NULL;
-                END;
-            END IF;
-        END$$;
-        """
-    )
-
-    op.execute(
-        """
-        DO $$
-        BEGIN
-            IF NOT EXISTS (SELECT 1 FROM pg_matviews WHERE matviewname='daily_sleep_stats') THEN
-                BEGIN
-                    EXECUTE $sql$
-                        CREATE MATERIALIZED VIEW daily_sleep_stats
-                        WITH (timescaledb.continuous) AS
-                        SELECT
-                            user_id,
-                            time_bucket('1 day', tracked_at) AS day,
-                            AVG(sleep_quality) AS avg_quality,
-                            AVG(adherence_percentage) AS avg_adherence,
-                            AVG(social_jet_lag_minutes) AS avg_jet_lag
-                        FROM daily_trackings
-                        GROUP BY user_id, time_bucket('1 day', tracked_at)
-                    $sql$;
-                EXCEPTION WHEN OTHERS THEN
-                    -- Continuous aggregates require a hypertable; skip in test environments
-                    NULL;
-                END;
-            END IF;
-            BEGIN
-                PERFORM add_continuous_aggregate_policy('daily_sleep_stats',
-                    start_offset => INTERVAL '1 month',
-                    end_offset => INTERVAL '1 hour',
-                    schedule_interval => INTERVAL '1 hour');
-            EXCEPTION WHEN OTHERS THEN
-                NULL;
-            END;
-        END$$;
-        """
-    )
+    # TimescaleDB compression/retention policies and continuous aggregates
+    # removed — Supabase no longer supports TimescaleDB.
 
 
 def downgrade():
