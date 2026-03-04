@@ -1,0 +1,21 @@
+# macOS
+.DS_Store
+
+# AI / assistants
+.claude/
+
+# Python caches / test artifacts
+__pycache__/
+*.py[cod]
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Logs
+*.log
+
+# Perf/Security reports (generated locally)
+reports/
