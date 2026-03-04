@@ -261,16 +261,26 @@ def start_scheduler() -> AsyncIOScheduler:
         try:
             parsed = urlparse(str(redis_url))
             if parsed.scheme.startswith("redis"):
-                jobstores["default"] = RedisJobStore(
-                    host=parsed.hostname,
-                    port=parsed.port or 6379,
-                    password=parsed.password,
-                    db=int(parsed.path.replace("/", "") or 0),
-                )
-        except Exception:
+                use_ssl = parsed.scheme == "rediss"
+                kwargs = {
+                    "host": parsed.hostname,
+                    "port": parsed.port or 6379,
+                    "password": parsed.password,
+                    "db": int(parsed.path.replace("/", "") or 0),
+                }
+                if use_ssl:
+                    kwargs["ssl"] = True
+                jobstores["default"] = RedisJobStore(**kwargs)
+        except Exception as exc:
+            logger.warning(
+                "scheduler_redis_fallback",
+                extra={"error": str(exc)},
+            )
             jobstores = {}
     if jobstores:
         logger.info("scheduler_jobstore_enabled", extra={"backend": "redis"})
+    else:
+        logger.info("scheduler_jobstore_memory", extra={"backend": "memory"})
     scheduler = AsyncIOScheduler(jobstores=jobstores or None)
     scheduler.add_job(
         run_notification_sweep,
