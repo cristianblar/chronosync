@@ -18,7 +18,7 @@ services:
       - ENABLE_SCHEDULER=false
       - DISABLE_RATE_LIMIT=true
       - ENVIRONMENT=test
-      - SENDGRID_API_KEY=
+      - RESEND_API_KEY=
       - ONESIGNAL_APP_ID=
       - GOOGLE_CLIENT_ID=
       - PYTHONPATH=/app

@@ -29,10 +29,10 @@ class Settings(BaseSettings):
     ONESIGNAL_APP_ID: str = ""
     ONESIGNAL_API_KEY: str = ""
 
-    SENDGRID_API_KEY: str = ""
+    RESEND_API_KEY: str = ""
     FROM_EMAIL: str = "noreply@chronosync.local"
 
-    # Local SMTP (Mailhog). Used when SENDGRID_API_KEY is empty.
+    # Local SMTP (Mailhog). Used when RESEND_API_KEY is empty.
     SMTP_HOST: str = "localhost"
     SMTP_PORT: int = 1025
 

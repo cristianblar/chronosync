@@ -1,7 +1,7 @@
 """
 Email utility with dual transport:
-- SendGrid when SENDGRID_API_KEY is set (production)
-- Plain SMTP via smtplib when SENDGRID_API_KEY is empty (local / Mailhog)
+- Resend when RESEND_API_KEY is set (production)
+- Plain SMTP via smtplib when RESEND_API_KEY is empty (local / Mailhog)
 """
 
 import smtplib
@@ -16,27 +16,27 @@ logger = logging.getLogger(__name__)
 
 async def send_email(to: str, subject: str, html: str) -> bool:
     """Send an email using whichever transport is configured."""
-    if settings.SENDGRID_API_KEY:
-        return await _send_via_sendgrid(to, subject, html)
+    if settings.RESEND_API_KEY:
+        return await _send_via_resend(to, subject, html)
     return _send_via_smtp(to, subject, html)
 
 
-async def _send_via_sendgrid(to: str, subject: str, html: str) -> bool:
-    from sendgrid import SendGridAPIClient
-    from sendgrid.helpers.mail import Mail, Email, To
+async def _send_via_resend(to: str, subject: str, html: str) -> bool:
+    import resend
 
-    client = SendGridAPIClient(settings.SENDGRID_API_KEY)
-    message = Mail(
-        from_email=Email(settings.FROM_EMAIL, "ChronoSync"),
-        to_emails=To(to),
-        subject=subject,
-        html_content=html,
-    )
+    resend.api_key = settings.RESEND_API_KEY
     try:
-        response = client.send(message)
-        return response.status_code == 202
+        resend.Emails.send(
+            {
+                "from": f"ChronoSync <{settings.FROM_EMAIL}>",
+                "to": [to],
+                "subject": subject,
+                "html": html,
+            }
+        )
+        return True
     except Exception as exc:
-        logger.error("SendGrid error: %s", exc)
+        logger.error("Resend error: %s", exc)
         return False
 
 

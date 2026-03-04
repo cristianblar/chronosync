@@ -72,7 +72,7 @@ services:
       ENABLE_SCHEDULER: "false"
       DISABLE_RATE_LIMIT: "true"
       ENVIRONMENT: test
-      SENDGRID_API_KEY: ""
+      RESEND_API_KEY: ""
       SMTP_HOST: mailhog_perf
       SMTP_PORT: "1025"
       FROM_EMAIL: noreply@chronosync.perf
