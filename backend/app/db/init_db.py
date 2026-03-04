@@ -1,0 +1,9 @@
+from sqlalchemy import text
+from app.db.session import engine
+from app.db.base import Base
+
+
+async def init_db():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+        await conn.execute(text("CREATE EXTENSION IF NOT EXISTS timescaledb;"))
