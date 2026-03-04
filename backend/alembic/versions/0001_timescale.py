@@ -14,15 +14,20 @@ depends_on = None
 
 
 def upgrade():
-    op.execute("CREATE EXTENSION IF NOT EXISTS timescaledb;")
-    # TimescaleDB hypertables require that every unique index includes the partition column.
-    # daily_trackings has a unique constraint on (user_id, date) which doesn't include
-    # tracked_at. We drop it, create the hypertable, then recreate the constraint with
-    # tracked_at included so TimescaleDB can enforce uniqueness per chunk.
+    # TimescaleDB is optional — skip entirely when the extension is not
+    # installed on the Postgres instance (e.g. Supabase free-tier).
     op.execute(
         """
         DO $$
         BEGIN
+            -- Attempt to enable TimescaleDB; bail out if not installed.
+            BEGIN
+                CREATE EXTENSION IF NOT EXISTS timescaledb;
+            EXCEPTION WHEN OTHERS THEN
+                RAISE NOTICE 'timescaledb not available – skipping hypertable setup';
+                RETURN;
+            END;
+
             -- Convert daily_trackings to hypertable on tracked_at
             IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name='daily_trackings') THEN
                 -- Drop the existing unique constraint that doesn't include the partition column
@@ -41,8 +46,6 @@ def upgrade():
                         chunk_time_interval => INTERVAL '7 days'
                     );
                 EXCEPTION WHEN OTHERS THEN
-                    -- Hypertable creation may fail in environments without full TimescaleDB
-                    -- support. The app still works without hypertable partitioning.
                     NULL;
                 END;
 
