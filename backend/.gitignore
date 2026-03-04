@@ -1,0 +1,23 @@
+# Virtual environments
+.venv/
+venv/
+
+# Environment files (commit samples only)
+.env*
+!.env.example
+
+# Python caches / test artifacts
+__pycache__/
+*.py[cod]
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+coverage-reports/
+
+# Packaging / build
+build/
+dist/
+*.egg-info/

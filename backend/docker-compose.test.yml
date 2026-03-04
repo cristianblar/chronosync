@@ -1,0 +1,62 @@
+##
+# Backend integration test environment (backend-only).
+# Used by: cd backend && make test-integration
+##
+version: "3.9"
+
+services:
+  api_test:
+    build:
+      context: .
+      target: test
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/test_db
+      - REDIS_URL=redis://redis:6379/0
+      - TEST_DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/test_db
+      - TEST_REDIS_URL=redis://redis:6379/0
+      - JWT_SECRET_KEY=test-secret-key-for-ci-32chars
+      - ENABLE_SCHEDULER=false
+      - DISABLE_RATE_LIMIT=true
+      - ENVIRONMENT=test
+      - SENDGRID_API_KEY=
+      - ONESIGNAL_APP_ID=
+      - GOOGLE_CLIENT_ID=
+      - PYTHONPATH=/app
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: ["pytest", "tests/", "-q", "--tb=short", "-p", "no:warnings"]
+
+  db:
+    image: timescale/timescaledb:latest-pg16
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=test_db
+    volumes:
+      - postgres_test_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d test_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_test_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  postgres_test_data:
+  redis_test_data:
