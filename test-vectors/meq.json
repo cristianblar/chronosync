@@ -1,0 +1,59 @@
+{
+  "vectors": [
+    {
+      "name": "all_4",
+      "values": [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
+      "expected": {
+        "score": 76,
+        "chronotype": "extreme_morning",
+        "ideal_wake_time": "09:06",
+        "ideal_sleep_time": "01:06",
+        "midpoint_of_sleep": "05:06"
+      }
+    },
+    {
+      "name": "all_3",
+      "values": [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+      "expected": {
+        "score": 57,
+        "chronotype": "intermediate",
+        "ideal_wake_time": "11:11",
+        "ideal_sleep_time": "03:11",
+        "midpoint_of_sleep": "07:11"
+      }
+    },
+    {
+      "name": "all_2",
+      "values": [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+      "expected": {
+        "score": 38,
+        "chronotype": "moderate_evening",
+        "ideal_wake_time": "13:17",
+        "ideal_sleep_time": "05:17",
+        "midpoint_of_sleep": "09:17"
+      }
+    },
+    {
+      "name": "all_1",
+      "values": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+      "expected": {
+        "score": 19,
+        "chronotype": "extreme_evening",
+        "ideal_wake_time": "15:22",
+        "ideal_sleep_time": "07:22",
+        "midpoint_of_sleep": "11:22"
+      }
+    },
+    {
+      "name": "one_6_rest_4",
+      "values": [4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 6, 4, 4, 4, 4],
+      "expected": {
+        "score": 78,
+        "chronotype": "extreme_morning",
+        "ideal_wake_time": "08:53",
+        "ideal_sleep_time": "00:53",
+        "midpoint_of_sleep": "04:53"
+      }
+    }
+  ]
+}
