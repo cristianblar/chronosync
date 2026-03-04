@@ -20,33 +20,59 @@ depends_on = None
 # exactly what SQLAlchemy sends, so we use the .name strings here.
 
 chronotypecategory = postgresql.ENUM(
-    "EXTREME_MORNING", "MODERATE_MORNING", "INTERMEDIATE",
-    "MODERATE_EVENING", "EXTREME_EVENING",
+    "EXTREME_MORNING",
+    "MODERATE_MORNING",
+    "INTERMEDIATE",
+    "MODERATE_EVENING",
+    "EXTREME_EVENING",
     name="chronotypecategory",
     create_type=False,
 )
 obligationtype = postgresql.ENUM(
-    "WORK", "CLASS", "FAMILY", "HEALTH", "OTHER",
+    "WORK",
+    "CLASS",
+    "FAMILY",
+    "HEALTH",
+    "OTHER",
     name="obligationtype",
     create_type=False,
 )
 activitytype = postgresql.ENUM(
-    "SLEEP", "WAKE", "MEAL", "EXERCISE", "CAFFEINE", "LIGHT_EXPOSURE", "WIND_DOWN",
+    "SLEEP",
+    "WAKE",
+    "MEAL",
+    "EXERCISE",
+    "CAFFEINE",
+    "LIGHT_EXPOSURE",
+    "WIND_DOWN",
     name="activitytype",
     create_type=False,
 )
 notificationtype = postgresql.ENUM(
-    "WIND_DOWN", "TRACKING_REMINDER", "ACTIVITY", "EVENT_PREP", "MILESTONE",
+    "WIND_DOWN",
+    "TRACKING_REMINDER",
+    "ACTIVITY",
+    "EVENT_PREP",
+    "MILESTONE",
     name="notificationtype",
     create_type=False,
 )
 timeofday = postgresql.ENUM(
-    "EARLY_MORNING", "MORNING", "MIDDAY", "AFTERNOON", "EVENING", "NIGHT",
+    "EARLY_MORNING",
+    "MORNING",
+    "MIDDAY",
+    "AFTERNOON",
+    "EVENING",
+    "NIGHT",
     name="timeofday",
     create_type=False,
 )
 eventtype = postgresql.ENUM(
-    "EXAM", "PRESENTATION", "INTERVIEW", "TRAVEL", "OTHER",
+    "EXAM",
+    "PRESENTATION",
+    "INTERVIEW",
+    "TRAVEL",
+    "OTHER",
     name="eventtype",
     create_type=False,
 )
@@ -92,7 +118,9 @@ def upgrade():
     op.create_table(
         "chronotype_assessments",
         sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
-        sa.Column("user_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("users.id"), nullable=False),
+        sa.Column(
+            "user_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("users.id"), nullable=False
+        ),
         sa.Column("responses", postgresql.JSONB, nullable=False),
         sa.Column("total_score", sa.Integer, nullable=False),
         sa.Column("chronotype", chronotypecategory, nullable=False),
@@ -112,7 +140,9 @@ def upgrade():
     op.create_table(
         "obligations",
         sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
-        sa.Column("user_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("users.id"), nullable=False),
+        sa.Column(
+            "user_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("users.id"), nullable=False
+        ),
         sa.Column("name", sa.String(length=100), nullable=False),
         sa.Column("type", obligationtype, nullable=False),
         sa.Column("start_time", sa.Time, nullable=False),
@@ -135,7 +165,9 @@ def upgrade():
     op.create_table(
         "sleep_plans",
         sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
-        sa.Column("user_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("users.id"), nullable=False),
+        sa.Column(
+            "user_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("users.id"), nullable=False
+        ),
         sa.Column("name", sa.String(length=100), server_default="Weekly Plan"),
         sa.Column("valid_from", sa.Date, nullable=False),
         sa.Column("valid_until", sa.Date, nullable=False),
@@ -157,7 +189,12 @@ def upgrade():
     op.create_table(
         "daily_schedules",
         sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
-        sa.Column("plan_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("sleep_plans.id"), nullable=False),
+        sa.Column(
+            "plan_id",
+            postgresql.UUID(as_uuid=True),
+            sa.ForeignKey("sleep_plans.id"),
+            nullable=False,
+        ),
         sa.Column("date", sa.Date, nullable=False),
         sa.Column("day_of_week", sa.Integer, nullable=False),
         sa.Column("sleep_time", sa.Time, nullable=False),
@@ -171,7 +208,12 @@ def upgrade():
     op.create_table(
         "schedule_items",
         sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
-        sa.Column("daily_schedule_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("daily_schedules.id"), nullable=False),
+        sa.Column(
+            "daily_schedule_id",
+            postgresql.UUID(as_uuid=True),
+            sa.ForeignKey("daily_schedules.id"),
+            nullable=False,
+        ),
         sa.Column("activity_type", activitytype, nullable=False),
         sa.Column("scheduled_time", sa.Time, nullable=False),
         sa.Column("duration_minutes", sa.Integer),
@@ -182,7 +224,9 @@ def upgrade():
     op.create_table(
         "daily_trackings",
         sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
-        sa.Column("user_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("users.id"), nullable=False),
+        sa.Column(
+            "user_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("users.id"), nullable=False
+        ),
         sa.Column("date", sa.Date, nullable=False),
         sa.Column("actual_sleep_time", sa.Time),
         sa.Column("actual_wake_time", sa.Time),
@@ -199,8 +243,15 @@ def upgrade():
     op.create_table(
         "energy_logs",
         sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
-        sa.Column("tracking_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("daily_trackings.id"), nullable=False),
-        sa.Column("user_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("users.id"), nullable=False),
+        sa.Column(
+            "tracking_id",
+            postgresql.UUID(as_uuid=True),
+            sa.ForeignKey("daily_trackings.id"),
+            nullable=False,
+        ),
+        sa.Column(
+            "user_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("users.id"), nullable=False
+        ),
         sa.Column("time_of_day", timeofday, nullable=False),
         sa.Column("energy_level", sa.Integer, nullable=False),
         sa.Column("logged_at", sa.DateTime(timezone=True), server_default=sa.text("now()")),
@@ -224,7 +275,9 @@ def upgrade():
         sa.Column("updated_at", sa.DateTime(timezone=True)),
     )
     op.create_index("idx_education_category", "educational_contents", ["category"])
-    op.create_index("idx_education_search", "educational_contents", ["search_vector"], postgresql_using="gin")
+    op.create_index(
+        "idx_education_search", "educational_contents", ["search_vector"], postgresql_using="gin"
+    )
     op.create_index("idx_education_slug", "educational_contents", ["slug"], unique=True)
 
     op.create_table(
@@ -241,7 +294,9 @@ def upgrade():
     op.create_table(
         "notifications",
         sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
-        sa.Column("user_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("users.id"), nullable=False),
+        sa.Column(
+            "user_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("users.id"), nullable=False
+        ),
         sa.Column("type", notificationtype, nullable=False),
         sa.Column("title", sa.String(length=100), nullable=False),
         sa.Column("body", sa.String(length=255), nullable=False),
@@ -262,7 +317,13 @@ def upgrade():
     op.create_table(
         "notification_settings",
         sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
-        sa.Column("user_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("users.id"), nullable=False, unique=True),
+        sa.Column(
+            "user_id",
+            postgresql.UUID(as_uuid=True),
+            sa.ForeignKey("users.id"),
+            nullable=False,
+            unique=True,
+        ),
         sa.Column("wind_down_enabled", sa.Boolean, server_default=sa.text("true")),
         sa.Column("wind_down_minutes_before", sa.Integer, server_default="60"),
         sa.Column("tracking_reminder_enabled", sa.Boolean, server_default=sa.text("true")),
@@ -279,7 +340,9 @@ def upgrade():
     op.create_table(
         "events",
         sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
-        sa.Column("user_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("users.id"), nullable=False),
+        sa.Column(
+            "user_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("users.id"), nullable=False
+        ),
         sa.Column("name", sa.String(length=100), nullable=False),
         sa.Column("type", eventtype, nullable=False),
         sa.Column("event_date", sa.Date, nullable=False),

@@ -31,7 +31,10 @@ if settings.ENVIRONMENT not in ("test", "local"):
 def run_migrations_offline():
     url = settings.DATABASE_URL
     context.configure(
-        url=url, target_metadata=target_metadata, literal_binds=True, dialect_opts={"paramstyle": "named"}
+        url=url,
+        target_metadata=target_metadata,
+        literal_binds=True,
+        dialect_opts={"paramstyle": "named"},
     )
     with context.begin_transaction():
         context.run_migrations()
@@ -56,6 +59,6 @@ async def run_migrations_online():
 
 
 if context.is_offline_mode():
- run_migrations_offline()
+    run_migrations_offline()
 else:
- asyncio.run(run_migrations_online())
+    asyncio.run(run_migrations_online())

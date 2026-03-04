@@ -74,7 +74,9 @@ class PlanService:
                 if day_of_week in (obligation.days_of_week or []):
                     obl_start = obligation.start_time
                     obl_end = obligation.end_time
-                    duration = (obl_end.hour * 60 + obl_end.minute) - (obl_start.hour * 60 + obl_start.minute)
+                    duration = (obl_end.hour * 60 + obl_end.minute) - (
+                        obl_start.hour * 60 + obl_start.minute
+                    )
                     ob_item = ScheduleItem(
                         daily_schedule_id=ds.id,
                         activity_type=ActivityType.OBLIGATION,

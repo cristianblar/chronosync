@@ -1,4 +1,3 @@
-from sqlalchemy import text
 from app.db.session import engine
 from app.db.base import Base
 

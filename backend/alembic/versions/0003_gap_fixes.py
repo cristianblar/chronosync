@@ -19,7 +19,9 @@ def upgrade():
     op.create_table(
         "refresh_tokens",
         sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
-        sa.Column("user_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("users.id"), nullable=False),
+        sa.Column(
+            "user_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("users.id"), nullable=False
+        ),
         sa.Column("token_hash", sa.String(length=128), nullable=False),
         sa.Column("expires_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("revoked_at", sa.DateTime(timezone=True)),
@@ -31,7 +33,9 @@ def upgrade():
     op.create_table(
         "device_registrations",
         sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
-        sa.Column("user_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("users.id"), nullable=False),
+        sa.Column(
+            "user_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("users.id"), nullable=False
+        ),
         sa.Column("player_id", sa.String(length=255), nullable=False),
         sa.Column("device_type", sa.String(length=20), nullable=False),
         sa.Column("created_at", sa.DateTime(timezone=True), server_default=sa.text("now()")),
@@ -42,8 +46,15 @@ def upgrade():
     op.create_table(
         "user_article_progress",
         sa.Column("id", postgresql.UUID(as_uuid=True), primary_key=True),
-        sa.Column("user_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("users.id"), nullable=False),
-        sa.Column("content_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("educational_contents.id"), nullable=False),
+        sa.Column(
+            "user_id", postgresql.UUID(as_uuid=True), sa.ForeignKey("users.id"), nullable=False
+        ),
+        sa.Column(
+            "content_id",
+            postgresql.UUID(as_uuid=True),
+            sa.ForeignKey("educational_contents.id"),
+            nullable=False,
+        ),
         sa.Column("progress_percent", sa.Integer, server_default="0"),
         sa.Column("is_completed", sa.Boolean, server_default=sa.text("false")),
         sa.Column("last_read_at", sa.DateTime(timezone=True)),

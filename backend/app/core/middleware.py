@@ -120,5 +120,7 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
             )
         else:
             # API responses are mostly JSON, so keep CSP strict.
-            response.headers["Content-Security-Policy"] = "default-src 'none'; frame-ancestors 'none'"
+            response.headers["Content-Security-Policy"] = (
+                "default-src 'none'; frame-ancestors 'none'"
+            )
         return response
