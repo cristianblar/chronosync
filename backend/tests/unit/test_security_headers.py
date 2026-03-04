@@ -28,3 +28,25 @@ def test_security_headers_middleware_sets_headers():
 
     # HSTS should only be enabled on HTTPS, but we verify it's configured by default.
     assert "max-age" in (res.headers.get("Strict-Transport-Security") or "")
+
+    # Non-docs paths use the strict CSP.
+    assert "default-src 'none'" in (res.headers.get("Content-Security-Policy") or "")
+
+
+def test_security_headers_docs_paths_use_permissive_csp():
+    app = FastAPI()
+    app.add_middleware(SecurityHeadersMiddleware)
+
+    @app.get("/docs")
+    def docs():
+        return {"ok": True}
+
+    client = TestClient(app)
+    res = client.get("/docs")
+    csp = res.headers.get("Content-Security-Policy") or ""
+
+    # Docs pages allow Swagger UI assets.
+    assert "'unsafe-inline'" in csp
+    assert "cdn.jsdelivr.net" in csp
+    # But still disallow framing.
+    assert "frame-ancestors 'none'" in csp
