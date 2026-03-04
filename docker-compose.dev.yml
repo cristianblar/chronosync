@@ -1,0 +1,56 @@
+##
+# Local development docker-compose.
+# Starts infrastructure services (DB, Redis, Mailhog) only.
+# Run the API and frontend locally with hot-reload via make dev-api / make dev-web.
+##
+version: "3.9"
+
+networks:
+  chronosync_dev:
+    driver: bridge
+
+volumes:
+  postgres_dev_data:
+  redis_dev_data:
+
+services:
+  db:
+    image: timescale/timescaledb:latest-pg16
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: chronosync
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+      - ./backend/scripts/init_timescale.sql:/docker-entrypoint-initdb.d/init_timescale.sql
+    networks:
+      - chronosync_dev
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d chronosync"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_dev_data:/data
+    networks:
+      - chronosync_dev
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    ports:
+      - "1025:1025"   # SMTP
+      - "8025:8025"   # Web UI
+    networks:
+      - chronosync_dev

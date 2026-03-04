@@ -1,0 +1,122 @@
+version: "3.9"
+
+networks:
+  chronosync:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
+
+services:
+  db:
+    image: timescale/timescaledb:latest-pg16
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: chronosync
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/scripts/init_timescale.sql:/docker-entrypoint-initdb.d/init_timescale.sql
+    networks:
+      - chronosync
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d chronosync"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - chronosync
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - chronosync
+
+  api:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/chronosync
+      REDIS_URL: redis://redis:6379
+      SMTP_HOST: mailhog
+      SMTP_PORT: "1025"
+      FROM_EMAIL: noreply@chronosync.local
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - chronosync
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health/live"]
+      interval: 30s
+      timeout: 10s
+      start_period: 30s
+      retries: 5
+
+  db-migrate:
+    build: ./backend
+    command: ["sh", "-c", "alembic upgrade head"]
+    env_file:
+      - ./backend/.env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/chronosync
+      REDIS_URL: redis://redis:6379
+      PYTHONPATH: /app
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - chronosync
+    profiles:
+      - migrate
+
+  db-seed:
+    build: ./backend
+    command: ["sh", "-c", "python -m scripts.seed_education"]
+    env_file:
+      - ./backend/.env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@db:5432/chronosync
+      REDIS_URL: redis://redis:6379
+      PYTHONPATH: /app
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - chronosync
+    profiles:
+      - seed
+
+  web:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+    depends_on:
+      - api
+    networks:
+      - chronosync

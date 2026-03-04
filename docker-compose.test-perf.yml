@@ -1,0 +1,112 @@
+##
+# Performance test environment.
+# Starts the full application stack on isolated ports so Lighthouse/Locust (running on the host)
+# can hit a real deployment-like stack, and Make can clean up afterwards.
+#
+# Port mapping (isolated):
+#   API:     http://localhost:8002
+#   Web:     http://localhost:3002
+#   Mailhog: http://localhost:8027
+#   DB:      localhost:5434
+#   Redis:   localhost:6381
+##
+
+networks:
+  chronosync_perf:
+    driver: bridge
+
+volumes:
+  postgres_perf_data:
+  redis_perf_data:
+
+services:
+  db_perf:
+    image: timescale/timescaledb:latest-pg16
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: perf_db
+    volumes:
+      - postgres_perf_data:/var/lib/postgresql/data
+    networks:
+      - chronosync_perf
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d perf_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis_perf:
+    image: redis:7-alpine
+    ports:
+      - "6381:6379"
+    volumes:
+      - redis_perf_data:/data
+    networks:
+      - chronosync_perf
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  mailhog_perf:
+    image: mailhog/mailhog:latest
+    ports:
+      - "1027:1025"
+      - "8027:8025"
+    networks:
+      - chronosync_perf
+
+  api_perf:
+    build:
+      context: ./backend
+    ports:
+      - "8002:8000"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@db_perf:5432/perf_db
+      REDIS_URL: redis://redis_perf:6379/0
+      JWT_SECRET_KEY: perf-test-secret-key-32chars-minimum
+      ENABLE_SCHEDULER: "false"
+      DISABLE_RATE_LIMIT: "true"
+      ENVIRONMENT: test
+      SENDGRID_API_KEY: ""
+      SMTP_HOST: mailhog_perf
+      SMTP_PORT: "1025"
+      FROM_EMAIL: noreply@chronosync.perf
+      ONESIGNAL_APP_ID: ""
+      GOOGLE_CLIENT_ID: ""
+      PYTHONPATH: /app
+    depends_on:
+      db_perf:
+        condition: service_healthy
+      redis_perf:
+        condition: service_healthy
+    networks:
+      - chronosync_perf
+    command: ["/bin/sh", "-c", "alembic upgrade head && python -m scripts.seed_education && uvicorn app.main:app --host 0.0.0.0 --port 8000"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health/live"]
+      interval: 10s
+      timeout: 5s
+      start_period: 60s
+      retries: 10
+
+  web_perf:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: ""
+        BACKEND_URL: "http://api_perf:8000"
+    ports:
+      - "3002:3000"
+    environment:
+      BACKEND_URL: http://api_perf:8000
+      NODE_ENV: production
+    depends_on:
+      api_perf:
+        condition: service_healthy
+    networks:
+      - chronosync_perf

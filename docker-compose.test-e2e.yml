@@ -1,0 +1,124 @@
+##
+# E2E test environment.
+# Starts the full application stack on isolated ports so Playwright (running on the host)
+# can drive the browser against a real app.
+#
+# Port mapping (different from dev to avoid conflicts):
+#   API:     http://localhost:8001
+#   Web:     http://localhost:3001
+#   Mailhog: http://localhost:8026 (Web UI to verify emails)
+#   DB:      localhost:5433
+#   Redis:   localhost:6380
+#
+# Usage (managed by root Makefile targets):
+#   docker compose -f docker-compose.test-e2e.yml up -d --build --wait
+#   npx playwright test (runs on host against localhost:3001)
+#   docker compose -f docker-compose.test-e2e.yml down -v
+##
+version: "3.9"
+
+networks:
+  chronosync_e2e:
+    driver: bridge
+
+volumes:
+  postgres_e2e_data:
+  redis_e2e_data:
+
+services:
+  db_e2e:
+    image: timescale/timescaledb:latest-pg16
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: e2e_db
+    volumes:
+      - postgres_e2e_data:/var/lib/postgresql/data
+    networks:
+      - chronosync_e2e
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d e2e_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis_e2e:
+    image: redis:7-alpine
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_e2e_data:/data
+    networks:
+      - chronosync_e2e
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  mailhog_e2e:
+    image: mailhog/mailhog:latest
+    ports:
+      - "1026:1025"   # SMTP
+      - "8026:8025"   # Web UI for verifying emails in tests
+    networks:
+      - chronosync_e2e
+
+  api_e2e:
+    build:
+      context: ./backend
+    ports:
+      - "8001:8000"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:postgres@db_e2e:5432/e2e_db
+      REDIS_URL: redis://redis_e2e:6379/0
+      JWT_SECRET_KEY: e2e-test-secret-key-32chars-minimum
+      ENABLE_SCHEDULER: "false"
+      DISABLE_RATE_LIMIT: "true"
+      ENVIRONMENT: test
+      SENDGRID_API_KEY: ""
+      SMTP_HOST: mailhog_e2e
+      SMTP_PORT: "1025"
+      FROM_EMAIL: noreply@chronosync.test
+      ONESIGNAL_APP_ID: ""
+      GOOGLE_CLIENT_ID: ""
+      # Ensure Python can find the app package when running alembic
+      PYTHONPATH: /app
+    depends_on:
+      db_e2e:
+        condition: service_healthy
+      redis_e2e:
+        condition: service_healthy
+    networks:
+      - chronosync_e2e
+    # Run migrations + seed before starting the API
+    command: ["/bin/sh", "-c", "alembic upgrade head && python -m scripts.seed_education && uvicorn app.main:app --host 0.0.0.0 --port 8000"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health/live"]
+      interval: 10s
+      timeout: 5s
+      start_period: 60s
+      retries: 10
+
+  web_e2e:
+    build:
+      context: ./frontend
+      args:
+        # Empty = use Next.js proxy rewrite, BACKEND_URL resolves within Docker network
+        NEXT_PUBLIC_API_URL: ""
+        BACKEND_URL: "http://api_e2e:8000"
+    ports:
+      - "3001:3000"
+    environment:
+      BACKEND_URL: http://api_e2e:8000
+      NODE_ENV: production
+    depends_on:
+      api_e2e:
+        condition: service_healthy
+    networks:
+      - chronosync_e2e
+    # No health check needed for the web container — Playwright polls the URL
+    # directly from the host. The container starts fine; the "unhealthy" status
+    # from wget inside Alpine was a false negative (app responds correctly on :3001).
