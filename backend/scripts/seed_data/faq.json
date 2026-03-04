@@ -1,0 +1,194 @@
+[
+  {
+    "question": "¿Qué es ChronoSync y cómo puede ayudarme?",
+    "answer": "ChronoSync es una aplicación de optimización del ritmo circadiano que usa un algoritmo basado en ciencia cronobiológica para calcular tu horario de sueño ideal. A partir de un cuestionario validado científicamente (MEQ) que determina tu cronotipo, y teniendo en cuenta tus obligaciones reales (trabajo, estudios, gimnasio), genera un plan de 7 días con horarios de sueño, despertar, exposición a la luz, cafeína y ejercicio que minimizan el conflicto con tu biología.\n\nNo es simplemente un rastreador de sueño: es un optimizador que te dice cuándo dormir para maximizar tu rendimiento y salud.",
+    "category": "general",
+    "sort_order": 1
+  },
+  {
+    "question": "¿Qué es el cuestionario MEQ y por qué son 19 preguntas?",
+    "answer": "El MEQ (Morningness-Eveningness Questionnaire) es el instrumento de evaluación del cronotipo más usado y validado en la literatura científica, desarrollado por los investigadores Jim Horne y Olov Östberg en 1976. Consta de exactamente 19 preguntas con opciones de respuesta ponderadas que generan una puntuación de 16 a 86.\n\nLas 19 preguntas están diseñadas para evaluar tres dimensiones: preferencia por el momento del sueño, nivel de alerta en diferentes momentos del día, y preferencia por la hora de ejercicio y actividad cognitiva exigente. Esta combinación permite una clasificación fiable en cinco categorías: definitivamente matutino, moderadamente matutino, intermedio, moderadamente vespertino y definitivamente vespertino.",
+    "category": "cronotipo",
+    "sort_order": 2
+  },
+  {
+    "question": "¿Puedo cambiar mi cronotipo?",
+    "answer": "El cronotipo tiene una base genética sólida —varios estudios de gemelos estiman su heredabilidad entre el 50 y el 54%— y no puede cambiarse fundamentalmente. Sin embargo, puede modularse dentro de ciertos límites mediante intervenciones cronobiológicas:\n\n**Intervenciones efectivas:**\n- Exposición a luz brillante por la mañana (adelanta el ritmo)\n- Evitar luz artificial brillante por la noche\n- Melatonina en dosis bajas (0.5 mg) 5 horas antes de la hora de dormir deseada\n- Ejercicio matutino\n- Horarios de comida más tempranos\n\nEstas estrategias pueden adelantar el ritmo circadiano 1-2 horas en personas moderadamente vespertinas. Para cronotipos definitivamente vespertinos (a veces denominado Síndrome de Fase de Sueño Retrasada), las modificaciones son más limitadas y el objetivo más realista es sincronizar mejor el horario laboral con el cronotipo, no al revés.",
+    "category": "cronotipo",
+    "sort_order": 3
+  },
+  {
+    "question": "¿Qué diferencia hay entre los 5 tipos de cronotipo?",
+    "answer": "El MEQ clasifica en 5 categorías según la puntuación:\n\n- **Definitivamente matutino (70-86)**: Despiertan natural y fácilmente antes de las 7:00, alcanzan su pico cognitivo antes del mediodía, se cansan hacia las 21:00-22:00. Aproximadamente el 10% de la población.\n- **Moderadamente matutino (59-69)**: Preferencia por la mañana, pero con mayor flexibilidad. Aproximadamente el 20% de la población.\n- **Intermedio (42-58)**: La mayoría de las personas. Relativa adaptabilidad a diferentes horarios, pico de rendimiento al mediodía-primera tarde. Aproximadamente el 40% de la población.\n- **Moderadamente vespertino (31-41)**: Dificultad para despertar temprano, pico de rendimiento en la tarde-noche. Aproximadamente el 20% de la población.\n- **Definitivamente vespertino (16-30)**: Prefieren acostarse muy tarde (1:00-3:00 o más), despiertan con gran dificultad antes de las 10:00-11:00, máximo rendimiento por la noche. Aproximadamente el 10% de la población.",
+    "category": "cronotipo",
+    "sort_order": 4
+  },
+  {
+    "question": "¿Con qué frecuencia debería regenerar mi plan?",
+    "answer": "Recomendamos regenerar el plan en los siguientes casos:\n\n- **Cambio de obligaciones**: si añades, modificas o eliminas una obligación recurrente (nuevo horario de trabajo, clase nueva, etc.)\n- **Cambio de estación**: la duración del día afecta a la exposición lumínica y puede ajustar ligeramente el ritmo circadiano\n- **Después de un período de jet lag** o desincronización importante\n- **Cada 4 semanas** como mantenimiento si nada ha cambiado, para que el algoritmo tenga en cuenta los datos de seguimiento acumulados\n\nEvita regenerar el plan con excesiva frecuencia (más de una vez por semana) ya que los planes de transición están diseñados para implementarse gradualmente.",
+    "category": "plan",
+    "sort_order": 5
+  },
+  {
+    "question": "¿Qué es el plan de transición y cuánto tiempo tarda?",
+    "answer": "Cuando el horario de sueño óptimo calculado difiere significativamente de tu horario actual, el algoritmo genera un Plan de Transición gradual en lugar de un cambio brusco.\n\nEl plan de transición ajusta el horario de sueño y despertar en incrementos de máximo 30 minutos por día. Esto es crucial porque cambiar el ritmo circadiano bruscamente produce un efecto similar al jet lag.\n\nPor ejemplo, si necesitas adelantar tu hora de dormir 2 horas (de las 01:00 a las 23:00), el plan de transición tomará aproximadamente 4-5 días. Durante este período, la adherencia es especialmente importante: saltarse una noche puede retroceder el progreso varios días.",
+    "category": "plan",
+    "sort_order": 6
+  },
+  {
+    "question": "¿Cómo funciona el algoritmo de optimización?",
+    "answer": "ChronoSync usa un motor de satisfacción de restricciones (CSP, Constraint Satisfaction Problem) implementado con Google OR-Tools, la librería de optimización de código abierto de Google.\n\nEl algoritmo modela el sueño como variables de decisión (hora de dormir y despertar para cada día de la semana) y aplica estas restricciones:\n\n- **Restricciones duras**: no solaparse con las obligaciones registradas (con margen de 60 minutos), duración mínima de sueño (7 horas), duración máxima (9 horas)\n- **Restricciones blandas**: minimizar la desviación respecto al ideal cronobiológico según el cronotipo, minimizar el jet lag social (variabilidad entre días), minimizar la velocidad de transición (no más de 30 min/día)\n\nSi el algoritmo CSP no encuentra solución óptima en el tiempo límite, aplica una heurística de respaldo basada en reglas cronobiológicas.",
+    "category": "plan",
+    "sort_order": 7
+  },
+  {
+    "question": "¿Cuánto tarda en generarse un plan?",
+    "answer": "La generación del plan tarda típicamente 1-3 segundos. En casos complejos (muchas obligaciones con horarios conflictivos, cronotipos extremos con obligaciones tempranas), el algoritmo CSP puede tardar hasta 10 segundos antes de activar la solución heurística de respaldo.\n\nSi ves que el plan tarda más de 15 segundos, puede indicar una combinación de obligaciones especialmente restrictiva. En ese caso, el plan generado será la mejor solución heurística disponible.",
+    "category": "plan",
+    "sort_order": 8
+  },
+  {
+    "question": "¿Qué hago si no puedo seguir el plan un día?",
+    "answer": "La adherencia perfecta no es el objetivo; la consistencia a largo plazo sí lo es.\n\nSi no puedes seguir el plan un día:\n1. **No te recuperes durmiendo mucho más**: La tentación de compensar durmiendo 10-12 horas altera el ritmo circadiano más que la privación original.\n2. **Mantén la hora de despertar**: Si solo puedes elegir una variable, mantener la hora de despertar constante es más importante que la hora de dormir para sincronizar el ritmo circadiano.\n3. **Registra lo que ocurrió**: El sistema aprende de los datos de seguimiento para adaptar futuros planes.\n4. **Regenera si hubo cambios importantes**: Si el evento fue puntual (fiesta, viaje corto), simplemente continúa el plan. Si hay un cambio permanente en tus circunstancias, regenera.",
+    "category": "plan",
+    "sort_order": 9
+  },
+  {
+    "question": "¿Cómo puedo mejorar mi calidad de sueño?",
+    "answer": "Los factores con mayor evidencia científica para mejorar la calidad del sueño son:\n\n1. **Consistencia horaria**: Acostarse y levantarse a la misma hora todos los días es el factor más poderoso.\n2. **Temperatura del dormitorio**: Mantener entre 16-19°C. El cuerpo necesita reducir su temperatura central 1-2°C para dormir bien.\n3. **Oscuridad total**: Evitar cualquier fuente de luz durante el sueño.\n4. **Evitar luz azul** (pantallas) 1-2 horas antes de dormir.\n5. **Cafeína**: El último café no más tarde de las 14:00 para la mayoría de personas.\n6. **Alcohol**: Aunque facilita dormirse, fragmenta el sueño REM y produce despertares en la segunda mitad de la noche.\n7. **Ejercicio regular**: Mejora el sueño profundo, aunque el ejercicio intenso nocturno puede dificultar el inicio del sueño.\n8. **Ritual relajante**: 30-60 minutos de actividades calmantes antes de dormir.",
+    "category": "sueno",
+    "sort_order": 10
+  },
+  {
+    "question": "¿Por qué tengo sueño después del almuerzo aunque haya dormido bien?",
+    "answer": "El clásico «sopor postprandial» tiene una base cronobiológica real que va más allá de la digestión. El ritmo circadiano humano produce una caída natural en la alerta y en la temperatura corporal entre las 13:00-15:00, independientemente de si has comido o no.\n\nEste «dip circadiano» es un vestigio evolutivo que coincide con la hora de la siesta mediterránea, y es biológicamente óptimo para una siesta corta de 10-20 minutos.\n\nLas comidas copiosas ricas en carbohidratos pueden amplificar este efecto al elevar la insulina y el triptófano plasmático (precursor de la serotonina, y esta de la melatonina). Para minimizarlo, opta por almuerzos moderados con proteínas y grasas saludables que amortigüen la respuesta insulínica.",
+    "category": "sueno",
+    "sort_order": 11
+  },
+  {
+    "question": "¿Cuánto café puedo tomar al día sin afectar al sueño?",
+    "answer": "La dosis y el timing son igualmente importantes:\n\n**Dosis**: La mayoría de adultos sanos metabolizan bien hasta 400 mg de cafeína al día (equivalente a 4-5 tazas de café filtrado de 240 ml). Por encima de esta cantidad, aumentan los efectos adversos (ansiedad, palpitaciones, insomnio).\n\n**Timing**: Este es el factor más importante para el sueño. Dado que la vida media de la cafeína es de 5-7 horas, la regla práctica es no tomar cafeína después de las **14:00** si duermes habitualmente a las 23:00. Si te acuestas más tarde (01:00), puedes extender el límite hasta las 16:00.\n\n**Tip cronobiológico**: Evita el café en la primera hora tras despertar (el cortisol del despertar ya proporciona alerta natural) y espera 90 minutos para maximizar el efecto de la cafeína cuando el cortisol comienza a bajar.",
+    "category": "cafeina",
+    "sort_order": 12
+  },
+  {
+    "question": "¿Las bebidas energéticas afectan al sueño más que el café?",
+    "answer": "Depende de la composición específica, pero en general las bebidas energéticas pueden ser más problemáticas por varios factores:\n\n1. **Contenido variable de cafeína**: Una lata de 500 ml puede contener entre 80-160 mg de cafeína, pero con frecuencia no está claramente indicado.\n2. **Otros estimulantes**: Muchas contienen taurina, guaraná (fuente adicional de cafeína) y vitaminas B en dosis altas, que pueden potenciar los efectos estimulantes.\n3. **Azúcar**: Las versiones con azúcar producen picos y valles de glucosa que afectan al estado de alerta y al sueño.\n4. **Efectos psicológicos**: Muchas personas asocian las bebidas energéticas con estados de alta alerta, lo que puede crear una activación condicionada.\n\nLa misma regla aplica: evitar cualquier fuente de cafeína después de las 14:00.",
+    "category": "cafeina",
+    "sort_order": 13
+  },
+  {
+    "question": "¿Es cierto que la cafeína no me afecta? Bebo café por la noche y duermo bien.",
+    "answer": "Esta es una de las creencias más comunes y mejor refutadas por la investigación científica. Un estudio clave de Drake et al. (2013) midió objetivamente el sueño (polisomnografía) de personas que tomaban cafeína 6 horas antes de dormir. Los datos objetivos mostraron alteraciones significativas del sueño (reducción del tiempo total, aumento de la latencia, fragmentación), aunque los participantes subjetivamente no percibían diferencia en la calidad de su sueño.\n\nLo que ocurre es que desarrollamos **tolerancia percibida** a los efectos activadores de la cafeína, pero el impacto en la arquitectura del sueño persiste. Nuestro cerebro aprende a «funcionar» con sueño de menor calidad, pero acumula deuda de sueño y deterioro cognitivo de forma subinsidiosa.\n\nSi eliminas la cafeína nocturna durante 2-3 semanas y mantienes el mismo horario, es probable que notes una mejora significativa en cómo te sientes al despertar.",
+    "category": "cafeina",
+    "sort_order": 14
+  },
+  {
+    "question": "¿Cuándo debería hacer ejercicio para optimizar el sueño?",
+    "answer": "El momento óptimo depende de tu cronotipo:\n\n**Matutinos**: El ejercicio mañanero coincide con su mayor motivación y aproveche el efecto sincronizador de la luz solar. Su rendimiento físico no estará en el pico absoluto, pero es sostenible.\n\n**Intermedios**: Amplia flexibilidad. El rendimiento físico tiende a ser máximo entre 14:00-18:00. Un entrenamiento en este rango es fisiológicamente óptimo.\n\n**Vespertinos**: El ejercicio de tarde-noche coincide con su pico fisiológico de rendimiento. El ejercicio moderado hasta 2 horas antes de dormir generalmente no afecta el sueño negativamente. El ejercicio muy intenso (>80% FCmax) a 1 hora de dormir sí puede retrasar el inicio del sueño en personas sensibles.\n\n**Regla general**: El ejercicio a cualquier hora es mejor para el sueño que no ejercitarse. La regularidad del horario de entrenamiento importa más que el momento exacto.",
+    "category": "ejercicio",
+    "sort_order": 15
+  },
+  {
+    "question": "¿El ejercicio nocturno realmente afecta al sueño?",
+    "answer": "La evidencia más reciente (Stutz et al., 2019, meta-análisis de 23 estudios) sugiere que el ejercicio moderado hasta 1 hora antes de dormir **no afecta negativamente** el sueño en la mayoría de personas sanas.\n\nSin embargo, hay factores que aumentan la probabilidad de interferencia:\n- Ejercicio muy intenso (HIIT, competición) que genera alta activación simpática\n- Personas con insomnia de base (el arousal pre-sueño ya es problemático)\n- Personas con cronotipo matutino que tienen hora de dormir natural muy temprana\n- Entrenamientos que incluyen mucha competitividad o activación emocional\n\nSi haces ejercicio nocturno y tienes problemas para conciliar el sueño, prueba a terminar el entrenamiento 2 horas antes de acostarte y añade una rutina de enfriamiento (stretching suave, ducha tibia) entre el ejercicio y la cama.",
+    "category": "ejercicio",
+    "sort_order": 16
+  },
+  {
+    "question": "¿Cuánta luz solar necesito cada mañana?",
+    "answer": "La dosis mínima efectiva de luz matutina para sincronizar el ritmo circadiano es **10-30 minutos de luz natural** (sin filtrar por cristales) en la primera hora tras despertar, idealmente en los primeros 30 minutos.\n\nLa intensidad importa más que la duración:\n- Luz interior típica: 100-300 lux (insuficiente para sincronización óptima)\n- Día nublado exterior: 10.000 lux (efectivo)\n- Día soleado: 50.000-100.000 lux (muy efectivo, pero protección UV necesaria)\n\nEn días nublados o en invierno, 20-30 minutos compensan la menor intensidad. En días soleados, 10 minutos pueden ser suficientes.\n\nSi no tienes acceso a luz natural por la mañana (turno nocturno, invierno en latitudes altas), una **lámpara de terapia de luz de 10.000 lux** a 50 cm durante 20-30 minutos es el sustituto más validado científicamente.",
+    "category": "luz",
+    "sort_order": 17
+  },
+  {
+    "question": "¿Las gafas de filtro de luz azul realmente funcionan?",
+    "answer": "Sí, pero con matices importantes:\n\n**Qué hacen**: Las gafas con filtro ámbar o naranja (bloqueando >99% de la luz <530 nm) reducen significativamente la supresión de melatonina por luz artificial nocturna. Un estudio de Burkhart y Phelps (2009) encontró que su uso 3 horas antes de dormir mejoraba la calidad del sueño de forma comparable a la oscuridad.\n\n**Qué NO hacen**: Las gafas «anti-luz azul» de uso diurno que filtran un pequeño porcentaje de luz azul para «reducir la fatiga visual» tienen evidencia muy débil para mejorar el sueño. El filtro tiene que ser significativo.\n\n**Alternativas comparables**: El modo nocturno de los dispositivos (Night Shift, Night Light, f.lux) reduce la temperatura de color y puede ser útil, aunque menos efectivo que las gafas ámbar porque no elimina completamente la luz activadora.\n\nPara uso práctico: las gafas de filtro ámbar son especialmente útiles si necesitas usar pantallas en las 2-3 horas previas al sueño y no puedes eliminar esa actividad.",
+    "category": "luz",
+    "sort_order": 18
+  },
+  {
+    "question": "¿Qué temperatura debería tener mi dormitorio para dormir mejor?",
+    "answer": "La temperatura ambiental óptima para el sueño es **16-19°C (61-66°F)**. Esta temperatura favorece el enfriamiento de la temperatura corporal central necesario para iniciar y mantener el sueño.\n\nMás allá del rango óptimo:\n- **Por debajo de 15°C**: puede ser demasiado frío, causando tensión muscular y despertares\n- **20-23°C**: subóptimo pero tolerable para la mayoría\n- **Por encima de 24°C**: produce fragmentación del sueño, especialmente del sueño REM que es temperatura-dependiente\n\nTips para optimizar la temperatura:\n- Usa sábanas y mantas que permitan regular fácilmente la temperatura (capa sobre capa)\n- Un baño o ducha caliente 1-2 horas antes de dormir provoca vasodilatación que enfría el cuerpo\n- Si tu pareja prefiere temperatura diferente, considera dos mantas separadas\n- Los calcetines calientes pueden parecer contraintuitivos, pero facilitan la vasodilatación periférica y aceleran el inicio del sueño",
+    "category": "sueno",
+    "sort_order": 19
+  },
+  {
+    "question": "¿El alcohol ayuda a dormir?",
+    "answer": "El alcohol facilita el inicio del sueño (reduce la latencia) pero deteriora significativamente la calidad del sueño en múltiples formas:\n\n1. **Supresión del sueño REM**: El alcohol suprime el sueño REM en la primera mitad de la noche, privando al cerebro de su período de consolidación emocional y creatividad.\n2. **Efecto rebote**: En la segunda mitad de la noche, cuando el alcohol se metaboliza, se produce un «rebote» con activación simpática, aumento de la frecuencia cardíaca y fragmentación del sueño.\n3. **Diuresis y ronquidos**: El alcohol aumenta la producción de orina (despertares nocturnos) y relaja los tejidos de la garganta, empeorando los ronquidos y la apnea del sueño.\n4. **Temperatura**: El alcohol produce vasodilatación superficial (sensación de calor) pero eleva la temperatura corporal central, contrarrestando el descenso necesario para el sueño profundo.\n\nEn resumen: el alcohol es un hipnótico deficiente que compromete la arquitectura del sueño. Si buscas facilitar el inicio del sueño, técnicas de relajación o melatonina son opciones mucho mejores.",
+    "category": "sueno",
+    "sort_order": 20
+  },
+  {
+    "question": "¿Cuál es la mejor posición para dormir?",
+    "answer": "La evidencia sobre posición de sueño es menos robusta que la de otros factores, pero hay algunas consideraciones relevantes:\n\n**De lado (posición lateral)**: En general la más recomendada. Facilita la respiración, reduce ronquidos y puede promover la limpieza glinfática del cerebro. El lado izquierdo puede reducir el reflujo gastroesofágico.\n\n**Boca arriba (supino)**: Puede favorecer la alineación de la columna si el colchón es adecuado, pero aumenta los ronquidos y la apnea obstructiva del sueño.\n\n**Boca abajo (prono)**: Generalmente desaconsejada por el estrés en el cuello y la columna, y dificulta la respiración.\n\nMás importante que la posición es la **calidad del colchón y la almohada** para tu tipo corporal y posición preferida. La mayoría de personas se mueven 20-40 veces por noche, por lo que la posición de inicio no determina la posición durante toda la noche.\n\nSi tienes apnea del sueño, la posición lateral puede ser terapéuticamente importante; consulta a tu médico.",
+    "category": "sueno",
+    "sort_order": 21
+  },
+  {
+    "question": "¿Me ayudarán las aplicaciones de ruido blanco a dormir mejor?",
+    "answer": "Para muchas personas, el ruido blanco (o variantes como ruido rosa o ruido marrón) sí es efectivo para mejorar el sueño, principalmente por dos mecanismos:\n\n1. **Enmascaramiento acústico**: El ruido constante «enmascara» los ruidos irregulares del entorno (tráfico, vecinos, pareja) que interrumpirían el sueño. Al proporcionar un «fondo sonoro» uniforme, los cambios abruptos de sonido que despertarían al durmiente quedan relativizados.\n\n2. **Condicionamiento**: Muchas personas desarrollan una asociación sueño-ruido blanco que facilita la relajación.\n\nEvidencia: Una revisión sistemática de Messineo et al. (2017) encontró que el ruido rosa en particular aumentaba el sueño de ondas lentas (N3) y mejoraba la memoria.\n\n**Ruido blanco vs. rosa vs. marrón**: El blanco tiene frecuencias iguales en todo el espectro (suena como un televisor estático); el rosa reduce las frecuencias altas y se percibe más suave; el marrón es aún más grave (similar a lluvia fuerte). Las preferencias son individuales.\n\n**Precaución**: El volumen importa. Más de 65 dB sostenido puede ser contraproducente y dañar la audición a largo plazo.",
+    "category": "sueno",
+    "sort_order": 22
+  },
+  {
+    "question": "¿El ejercicio por la mañana en ayunas quema más grasa?",
+    "answer": "Esta pregunta combina cronobiología y nutrición deportiva. La evidencia actual es matizada:\n\n**Qué dice la ciencia**: El ejercicio en ayunas activa preferentemente la oxidación de grasas durante la sesión (mayor ratio grasa:carbohidratos). Sin embargo, la composición corporal a largo plazo no parece verse más beneficiada que el ejercicio en estado alimentado, cuando se controlan las calorías totales y la proteína.\n\n**Implicaciones para el sueño y el ritmo circadiano**: El ejercicio matutino en ayunas tiene efectos cronobiológicos positivos independientemente de la composición corporal:\n- Sincroniza los relojes periféricos (especialmente el del músculo y el hígado)\n- Eleva el cortisol del despertar (adaptación positiva)\n- Expone a la luz matutina si se hace al aire libre\n\n**Recomendación práctica**: Si hacer ejercicio en ayunas por la mañana es lo que te permite ser consistente, adelante. Si te hace sentir débil o compromete el rendimiento, un pequeño desayuno con proteínas y carbohidratos de bajo índice glucémico 30-60 minutos antes no perjudica la salud circadiana.",
+    "category": "ejercicio",
+    "sort_order": 23
+  },
+  {
+    "question": "¿Cuántos días tarda en adaptarse mi ritmo circadiano después de empezar el plan?",
+    "answer": "La adaptación circadiana es gradual, no inmediata. Puedes esperar los siguientes hitos:\n\n**Primeros 3-5 días**: La presión homeostática de sueño comienza a alinearse con el nuevo horario. Puedes sentirte con sueño antes o después de lo habitual, o tener dificultades para seguir exactamente el horario.\n\n**1-2 semanas**: El perfil de temperatura corporal y cortisol empieza a ajustarse al nuevo horario. La latencia de inicio del sueño mejora.\n\n**2-4 semanas**: El ritmo melatonina se ajusta significativamente. La sensación de somnolencia natural y de alerta mañanera comienza a coincidir mejor con el horario del plan.\n\n**4-8 semanas**: Ajuste más completo de todos los sistemas circadianos, especialmente los relojes periféricos (metabólico, hormonal).\n\nLa clave del éxito es la **consistencia**: incluso los fines de semana. Saltarse el horario el fin de semana reinicia parcialmente la adaptación y es la principal causa de que los planes no funcionen.",
+    "category": "plan",
+    "sort_order": 24
+  },
+  {
+    "question": "¿Qué es el sistema glinfático y por qué importa para el sueño?",
+    "answer": "El sistema glinfático es la red de «limpieza» del cerebro, descubierta en 2013 por la investigadora Maiken Nedergaard de la Universidad de Rochester. Funciona como el sistema linfático del resto del cuerpo, pero con algunas características únicas:\n\nDurante el sueño (especialmente el sueño profundo), las células gliales que rodean los vasos sanguíneos cerebrales se contraen hasta un 60%, ampliando el espacio extracelular y permitiendo que el líquido cefalorraquídeo fluya activamente entre las neuronas, arrastrando los residuos metabólicos acumulados durante la vigilia.\n\nEntre estos residuos se incluye la **beta-amiloide**, la proteína asociada con las placas del Alzheimer. Estudios en humanos muestran que incluso una noche de privación de sueño aumenta los niveles de beta-amiloide en el cerebro.\n\nEsto convierte el sueño no solo en una oportunidad de descanso, sino en una **necesidad de mantenimiento neurológico** con implicaciones directas para la salud cerebral a largo plazo.",
+    "category": "sueno",
+    "sort_order": 25
+  },
+  {
+    "question": "¿Es normal despertarse a mitad de la noche?",
+    "answer": "Depende de la frecuencia y duración. Algunos datos para contextualizar:\n\n**Despertares breves normales**: Las personas adultas se despiertan brevemente 10-30 veces por noche durante las transiciones entre ciclos de sueño. La mayoría no son conscientes de ellos y se vuelven a dormir en segundos.\n\n**Despertares más largos (2:00-4:00)**: Estos son más problemáticos y pueden tener varias causas:\n- Apnea del sueño (el cuerpo despierta al dejar de respirar)\n- Alcohol (el efecto rebote de la segunda mitad de noche)\n- Cortisol elevado por estrés crónico\n- Vejiga llena (evitar hidratación excesiva 2-3h antes de dormir)\n- Temperatura del dormitorio excesiva\n- Históricamente: algunos investigadores argumentan que el sueño bifásico (dos períodos con vigilia intermedia) fue el patrón normal pre-industrial\n\nSi te despiertas regularmente, no puedes volver a dormirte en 20-30 minutos y esto afecta tu función diurna, consulta con un especialista del sueño. La apnea del sueño es frecuentemente infradiagnosticada y muy tratable.",
+    "category": "sueno",
+    "sort_order": 26
+  },
+  {
+    "question": "¿Cuáles son las consecuencias del trabajo por turnos para la salud?",
+    "answer": "El trabajo por turnos es uno de los mejores modelos naturales para estudiar las consecuencias de la desincronización circadiana crónica, y los resultados son preocupantes:\n\n**Salud metabólica**: Los trabajadores por turnos tienen mayor prevalencia de síndrome metabólico, obesidad, diabetes tipo 2 y enfermedad cardiovascular. El riesgo de infarto es entre 23-40% mayor según meta-análisis.\n\n**Salud mental**: Mayor prevalencia de depresión, ansiedad y agotamiento (burnout). El riesgo de depresión aumenta un 33% según estudios longitudinales.\n\n**Función cognitiva**: Deterioro en atención, velocidad de procesamiento y memoria de trabajo. Un estudio de Marquié et al. (2015) siguió a trabajadores por turnos durante 10 años y encontró un envejecimiento cognitivo acelerado.\n\n**Cáncer**: La IARC (Agencia Internacional para la Investigación del Cáncer) clasifica el trabajo por turnos con alteración del ritmo circadiano como «probablemente carcinogénico» (Grupo 2A), con mayor evidencia para cáncer de mama y próstata.\n\nEstrategias de mitigación: exposición a luz brillante durante los turnos nocturnos, oscuridad completa al dormir durante el día, melatonina para facilitar el ajuste, y horarios de rotación en la dirección correcta (atrasar en lugar de adelantar).",
+    "category": "cronotipo",
+    "sort_order": 27
+  },
+  {
+    "question": "¿Cómo sé si tengo apnea del sueño?",
+    "answer": "La apnea obstructiva del sueño (AOS) es uno de los trastornos del sueño más frecuentes y, sin embargo, más infradiagnosticados. Se estima que afecta al 2-4% de mujeres y 4-9% de hombres adultos, con muchos casos sin diagnosticar.\n\n**Señales de alerta:**\n- Ronquidos fuertes (no siempre presente)\n- Pausas en la respiración observadas por la pareja\n- Despertares con sensación de asfixia o boca muy seca\n- Somnolencia diurna excesiva a pesar de «dormir suficiente»\n- Dolores de cabeza matutinos\n- Levantarse a orinar varias veces por noche\n- Dificultad para concentrarse, irritabilidad\n\n**Factores de riesgo**: Sobrepeso/obesidad (especialmente cuello grueso >43 cm en hombres, >38 cm en mujeres), edad avanzada, sexo masculino, consumo de alcohol, sedantes o tabaco.\n\n**Diagnóstico**: La polisomnografía (estudio de sueño completo) es el gold standard. También existen dispositivos de diagnóstico domiciliario aprobados para sospecha moderada-alta.\n\n**Tratamiento**: El CPAP (presión positiva continua de aire) es el tratamiento más efectivo. Para casos leves, los dispositivos de avance mandibular o la cirugía pueden ser opciones.\n\nSi tienes sospechas, consulta con tu médico: la AOS sin tratar aumenta el riesgo cardiovascular y empeora dramáticamente la calidad de vida.",
+    "category": "sueno",
+    "sort_order": 28
+  },
+  {
+    "question": "¿Cuánto afecta el estrés al sueño y qué puedo hacer?",
+    "answer": "El estrés es una de las causas más frecuentes de insomnio agudo y crónico. El mecanismo es directo: el cortisol y la adrenalina liberados en respuesta al estrés activan el sistema nervioso simpático y suprimen los sistemas necesarios para iniciar y mantener el sueño.\n\n**El ciclo vicioso estrés-sueño**: El estrés dificulta el sueño → la privación de sueño eleva el cortisol → mayor sensibilidad al estrés → peor sueño. Una vez establecido, este ciclo puede perpetuarse incluso después de que el estresor original haya desaparecido.\n\n**Estrategias basadas en evidencia:**\n\n1. **Mindfulness y meditación**: Reducen el cortisol y la activación del sistema nervioso simpático. 15-20 minutos de práctica diaria durante 8 semanas muestran cambios medibles.\n\n2. **Escritura expresiva nocturna**: Escribir durante 20 minutos sobre las preocupaciones del día antes de dormir «descarga» la memoria de trabajo y reduce la rumiación nocturna.\n\n3. **Relajación muscular progresiva**: Tensar y relajar sistemáticamente los grupos musculares reduce la tensión física acumulada.\n\n4. **Respiración 4-7-8**: Inhalar 4 segundos, retener 7, exhalar 8. Activa el nervio vago y el sistema parasimpático.\n\n5. **TCC-I**: Si el insomnio ya es crónico (>3 meses, >3 noches/semana), la terapia cognitivo-conductual para el insomnio tiene la mejor evidencia disponible.",
+    "category": "sueno",
+    "sort_order": 29
+  },
+  {
+    "question": "¿La meditación antes de dormir realmente mejora el sueño?",
+    "answer": "Sí, con evidencia creciente. Un meta-análisis de Gong et al. (2016) analizó 18 estudios de mindfulness para el insomnio y encontró mejoras significativas en calidad del sueño, latencia de inicio, y tiempo total de sueño, comparables a los efectos de los medicamentos para dormir pero sin efectos secundarios.\n\n**Tipos de meditación con evidencia para el sueño:**\n\n- **MBSR (Mindfulness-Based Stress Reduction)**: El programa de 8 semanas de Kabat-Zinn es el más estudiado. Reduce el cortisol nocturno y mejora la calidad del sueño.\n\n- **Yoga Nidra / NSDR (Non-Sleep Deep Rest)**: Técnicas de relajación profunda que producen estados cerebrales similares al sueño N1-N2 y reducen la activación simpática.\n\n- **Meditación de escaneo corporal**: Especialmente efectiva para reducir la tensión muscular y la activación cognitiva pre-sueño.\n\n- **Meditación de bondad amorosa (Loving Kindness)**: Reduce la activación emocional negativa que puede perpetuar el insomnio.\n\n**Tiempo recomendado**: 15-30 minutos, integrados en el ritual pre-sueño. Los beneficios se acumulan con práctica regular; una sola sesión ofrece efectos limitados.",
+    "category": "sueno",
+    "sort_order": 30
+  },
+  {
+    "question": "¿Cómo afecta el sueño a mi sistema inmunitario?",
+    "answer": "La relación entre sueño e inmunidad es bidireccional y fundamental:\n\n**El sueño fortalece el sistema inmunitario:**\nDurante el sueño profundo (N3), se producen aumentos en las células T, células NK (Natural Killer) y citoquinas pro-inflamatorias necesarias para combatir infecciones. Es el período de mayor producción de hormona del crecimiento (que estimula la proliferación de células inmunitarias).\n\nUn estudio clásico de Cohen et al. (2009) expuso a voluntarios al virus del resfriado común y encontró que los que dormían menos de 7 horas tenían un riesgo 3 veces mayor de desarrollar síntomas que los que dormían 8 horas o más.\n\n**La privación de sueño suprime la inmunidad:**\nIncluso una noche de sueño reducido reduce la efectividad de las células NK hasta un 70% y disminuye la respuesta a vacunas. Las personas privadas de sueño crónicamente tienen niveles elevados de marcadores inflamatorios (IL-6, CRP, TNF-α).\n\n**Implicaciones prácticas:**\n- Antes de una vacunación, prioriza el sueño la noche previa y posterior para maximizar la respuesta inmunitaria\n- En caso de infección, el sueño extra acelera la recuperación\n- El sueño crónico insuficiente aumenta la susceptibilidad a infecciones y la severidad de enfermedades autoinmunes",
+    "category": "sueno",
+    "sort_order": 31
+  },
+  {
+    "question": "¿Qué diferencia hay entre la fatiga y el sueño? ¿Puedo estar cansado pero no tener sueño?",
+    "answer": "Sí, y es una distinción clínicamente importante:\n\n**Sueño (somnolencia)**: La presión de dormir, mediada principalmente por la adenosina acumulada y el estado del reloj circadiano. Se manifiesta como dificultad para mantener los ojos abiertos, bajo tono muscular, y tendencia a quedarse dormido en situaciones pasivas.\n\n**Fatiga**: El agotamiento físico y/o mental que no necesariamente se traduce en sueño. Puede experimentarse como debilidad muscular, falta de motivación, dificultad para concentrarse y sensación de esfuerzo excesivo, sin la somnolencia característica del sueño.\n\n**Por qué puedes estar cansado pero no tener sueño:**\n1. **Estrés y activación simpática**: El cortisol y la adrenalina bloquean la adenosina, produciendo fatiga sin somnolencia (el paradójico «demasiado cansado para dormir»)\n2. **Fase circadiana incorrecta**: Intentar dormir en tu «zona prohibida circadiana» (typically 2-3 horas antes de tu hora habitual de dormir) provoca dificultad para conciliar el sueño aunque estés físicamente agotado\n3. **Síndrome de fatiga crónica**: Condición médica donde la fatiga no se alivia con el sueño\n4. **Depresión**: Produce fatiga profunda con frecuentes alteraciones del sueño de diferente tipo\n\nSi experimentas fatiga persistente que no mejora con sueño adecuado, consulta con un médico.",
+    "category": "sueno",
+    "sort_order": 32
+  }
+]
